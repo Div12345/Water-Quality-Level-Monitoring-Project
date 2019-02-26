@@ -19,8 +19,8 @@
 
 /************************ Example Starts Here *******************************/
 //Analog Input Control
-#define p 13 //D7 - high to get pH
-#define t 15 //D8 - high to get Temperatue
+#define p 13 //D7 - high to get Turbidity
+#define t 15 //D8 - high to get Temperature
 
 //ULTRASOUND
 // defines pins numbers
@@ -46,15 +46,7 @@ DallasTemperature sensors(&oneWire);
 int numberOfDevices; // Number of temperature devices found
 DeviceAddress tempDeviceAddress; // We'll use this variable to store a found device address
 
-//pH
-#define Offset 0.00 //deviation compensate
-#define LED 13
-#define samplingInterval 20
-#define printInterval 800
-#define ArrayLenth 40 //times of collection
 
-int pHArray[ArrayLenth]; //Store the average value of the sensor feedback
-int pHArrayIndex = 0;
 
 // Adafruit IO
 // track time of last published messages and limit feed->save events to once
@@ -69,7 +61,7 @@ AdafruitIO_Feed *tank_2 = io.feed("tank-2");
 // set up the feed
 AdafruitIO_Feed *temperature = io.feed("temperature");
 // set up the feed
-AdafruitIO_Feed *ph = io.feed("ph");
+AdafruitIO_Feed *turbidity = io.feed("turbidity");
 
 void setup() {
 //Analog In Control
@@ -126,8 +118,9 @@ void loop() {
     printTemperature(tempDeviceAddress); // Use a simple function to print out the data
   }
 
-  //pH
-  getPH();
+  //Turbidity
+  read_turbidity();
+  
 
   //Close Analog
   digitalWrite(p, LOW);
@@ -135,6 +128,7 @@ void loop() {
   
   //Ultrasounds
   level1();
+  delay(1000);
   level2();  
   
   // update timer
@@ -214,58 +208,13 @@ void printTemperature(DeviceAddress deviceAddress)
   }
 }
 
-void getPH(void) 
-{
+void read_turbidity(){
   digitalWrite(t, LOW);
   digitalWrite(p, HIGH);
-  static float pHValue, voltage;
-    delay(samplingInterval);
-    pHArray[pHArrayIndex++] = analogRead(analog);
-    if (pHArrayIndex == ArrayLenth)pHArrayIndex = 0;
-    voltage = avergearray(pHArray, ArrayLenth) * 5.0 / 1024;
-    pHValue = 3.5 * voltage + Offset;
-    ph->save(pHValue);
-}
-
-double avergearray(int* arr, int number) 
-{
-  int i;
-  int max, min;
-  double avg;
-  long amount = 0;
-  if (number <= 0) {
-    return 0;
+  double avg_ntu = 0 ,ntu;
+  int sensorValue = analogRead(A0);
+  float voltage = sensorValue * (5.0 / 1024.0);
+  ntu = ((-1120.4)*voltage*voltage)+(5742.3*voltage) - 4352.9;
+  avg_ntu += (ntu);
+  turbidity->save(avg_ntu);
   }
-  if (number < 5) { //less than 5, calculated directly statistics
-    for (i = 0; i < number; i++) {
-      amount += arr[i];
-    }
-    avg = amount / number;
-    return avg;
-  }
-  else {
-    if (arr[0] < arr[1]) {
-      min = arr[0]; max = arr[1];
-    }
-    else {
-      min = arr[1]; max = arr[0];
-    }
-    for (i = 2; i < number; i++) {
-      if (arr[i] < min) {
-        amount += min; //arr<min
-        min = arr[i];
-      }
-      else {
-        if (arr[i] > max) {
-          amount += max; //arr>max
-          max = arr[i];
-        }
-        else {
-          amount += arr[i]; //min<=arr<=max
-        }
-      }
-    }
-    avg = (double)amount / (number - 2);
-  }
-  return avg;
-}
