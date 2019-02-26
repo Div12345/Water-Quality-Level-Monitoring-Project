@@ -14,7 +14,7 @@ The components used are -
 
 The framework - 
 The prototype shows 3 tanks each tank consisting of a ultrasound sensor to detect the water level in the tank. Further one tank has the temperature sensor, an other tank has the pH sensor and the other has the Turbidity sensor.
-The tank with the temperature sensor and the one with the pH sensor are connected to a single NodeMCU, to display the ability of single NodeMCU to handle more than a single tank, corresponding to the multiple tanks present in a single hostel and the one with the Turbidity sensor is connected to a NodeMCU, representing a tank in another hostel, thus exhibiting the ability of the framework to manage multiple groups of tanks concurrently.
+The tank with the Temperature sensor and the one with the Turbidity sensor are connected to a single NodeMCU, to display the ability of single NodeMCU to handle more than a single tank, corresponding to the multiple tanks present in a single hostel and the one with the pH sensor is connected to a NodeMCU, representing a tank in another hostel, thus exhibiting the ability of the framework to manage multiple groups of tanks concurrently.
 One NodeMCU is connected to a relay which controls the submersible water pumps, automatically switching them ON or OFF depending on the water level in the corresponding tank.
 The NodeMCUs are connected to a WiFi network through which they transfer their data to the Adafruit IO server.
 A mobile phone using the app MQTT Dash makes use of the MQTT communication protocol to recieve and send data to the server. 
