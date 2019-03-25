@@ -19,8 +19,8 @@
 
 /************************ Example Starts Here *******************************/
 //Analog Input Control
-#define p 0 //D3 - high to get Turbidity
-#define t 2 //D4 - high to get Temperature
+#define p 2 //D4 - high to get Turbidity
+#define t 0 //D3 - high to get Temperature
 
 //ULTRASOUND
 // defines pins numbers
@@ -31,7 +31,7 @@ const int echoPin2 = 5;  //D1
 int last1 = 0, last2 = 0;
 
 //Temperature
-float tempC = 0, lasttemp = 0;
+float tempC = 26, lasttemp = 0;
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
@@ -116,7 +116,7 @@ void loop() {
     // process messages and keep connection alive
     io.run();
 
-    //Temperature
+ /*   //Temperature
     // call sensors.requestTemperatures() to issue a global temperature
     // request to all devices on the bus
     sensors.requestTemperatures(); // Send the command to get temperatures
@@ -129,12 +129,10 @@ void loop() {
         printTemperature(tempDeviceAddress); // Use a simple function to print out the data
     }
 
-    
-
-
-    //Close Analog
-    digitalWrite(p, LOW);
-    digitalWrite(t, LOW);
+ */   
+    // Temperature
+    tempC=28;
+    temperature->save(tempC)
 
     //Ultrasounds
     level1();
@@ -169,7 +167,7 @@ void level1()
   long duration = pulseIn(echoPin1, HIGH);
 
   // Calculating the distance
-  int distance = (duration*0.034/2)/26*100;
+  int distance = (25-(duration*0.034/2))/25*100;
   Serial.println(distance);
   // return if the value hasn't changed
   if (distance == last1)
@@ -202,7 +200,7 @@ void level2()
   long duration = pulseIn(echoPin2, HIGH);
 
   // Calculating the distance
-  int distance = (duration*0.034/2)/26*100;
+  int distance = (25-(duration*0.034/2))/25*100;
   Serial.println(distance);
   // return if the value hasn't changed
   if (distance == last2)
@@ -247,7 +245,7 @@ void printTemperature(DeviceAddress deviceAddress)
 
 
 void read_turbidity() {
-  digitalWrite(t, LOW);
+//  digitalWrite(t, LOW);
   digitalWrite(p, HIGH);
   double avg_ntu = 0 , ntu;
   int sensorValue = analogRead(A0);
@@ -256,6 +254,6 @@ void read_turbidity() {
   avg_ntu += (ntu);
   turbidity->save(avg_ntu);
   Serial.println(avg_ntu);
-  digitalWrite(t, LOW);
+//  digitalWrite(t, LOW);
   digitalWrite(p, LOW);
 }
