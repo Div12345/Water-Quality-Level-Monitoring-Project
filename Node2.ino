@@ -36,6 +36,7 @@ AdafruitIO_Feed *tank_3 = io.feed("tank-3");
 AdafruitIO_Feed *ph = io.feed("ph");
 
 //pH
+#define analog A0
 #define Offset 0.00 //deviation compensate
 #define LED 13
 #define samplingInterval 20
@@ -92,7 +93,7 @@ digitalWrite(trigPin1, LOW);
 long duration = pulseIn(echoPin1, HIGH);
 
 // Calculating the distance
-int distance= duration*0.034/2;
+int distance= (duration*0.034/2)/26*100;
 
   // return if the value hasn't changed
   if(distance == last1)
