@@ -23,7 +23,7 @@ const int p2 = 4; //D2
 const int p3 = 0; //D3
 int over = 0;
 // this int will hold the current count for our sketch
-int count = 0,lowlimit=100,highlimit=1500;
+int count = 0,lowlimit=10,highlimit=40;
 
 // Track time of last published messages and limit feed->save events to once
 // every IO_LOOP_DELAY milliseconds.
