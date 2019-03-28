@@ -6,20 +6,23 @@ void setup() {
   digitalWrite(8,OUTPUT);
   digitalWrite(9,OUTPUT);
   digitalWrite(10,OUTPUT);
+  digitalWrite(8,LOW);
+  digitalWrite(9,LOW);
+  digitalWrite(10,LOW);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(digitalRead(2)==1)
+  if(digitalRead(2)==HIGH)
   {digitalWrite(8,HIGH);}
-  if(digitalRead(2)==0)
+  else if(digitalRead(2)==LOW)
   {digitalWrite(8,LOW);}
-  if(digitalRead(3)==1)
+  if(digitalRead(3)==HIGH)
   {digitalWrite(9,HIGH);}
-  if(digitalRead(3)==0)
+  else if(digitalRead(3)==LOW)
   {digitalWrite(9,LOW);}
-  if(digitalRead(4)==1)
+  if(digitalRead(4)==HIGH)
   {digitalWrite(10,HIGH);}
-  if(digitalRead(4)==0)
+  else if(digitalRead(4)==LOW)
   {digitalWrite(10,LOW);}
 }
