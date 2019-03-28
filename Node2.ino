@@ -20,14 +20,14 @@
 /************************ Example Starts Here *******************************/
 //ULTRASOUND
 // defines pins numbers
-const int trigPin1 = 2;  //D4
-const int echoPin1 = 0;  //D3
+const int trigPin1 = 4;  //D2
+const int echoPin1 = 5;  //D1
 int last1=0;
 
 // Adafruit IO
 // track time of last published messages and limit feed->save events to once
 // every IO_LOOP_DELAY milliseconds
-#define IO_LOOP_DELAY 15000
+#define IO_LOOP_DELAY 20000
 unsigned long lastUpdate=0;
 
 // set up the feed
@@ -51,7 +51,7 @@ void setup()
   //Ultrasound
 pinMode(trigPin1, OUTPUT); // Sets the trigPin as an Output
 pinMode(echoPin1, INPUT); // Sets the echoPin as an Input
-  
+  Serial.begin(9600);
 // connect to io.adafruit.com
   io.connect();
 // wait for a connection
@@ -93,11 +93,8 @@ digitalWrite(trigPin1, LOW);
 long duration = pulseIn(echoPin1, HIGH);
 
 // Calculating the distance
-int distance= (duration*0.034/2)/26*100;
-
-  // return if the value hasn't changed
-  if(distance == last1)
-    return;
+int distance= (25-(duration*0.034/2))/25*100;
+Serial.println(distance);
 
   // save the current state to the analog feed
   tank_3->save(distance);
