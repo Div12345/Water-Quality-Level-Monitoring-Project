@@ -51,7 +51,7 @@ DeviceAddress tempDeviceAddress; // We'll use this variable to store a found dev
 // Adafruit IO
 // track time of last published messages and limit feed->save events to once
 // every IO_LOOP_DELAY milliseconds
-#define IO_LOOP_DELAY 15000
+#define IO_LOOP_DELAY 20000
 unsigned long lastUpdate = 0;
 
 // set up the feed
@@ -132,17 +132,17 @@ void loop() {
  */   
     // Temperature
     tempC=28;
-    temperature->save(tempC)
+    temperature->save(tempC);
 
     //Ultrasounds
-    level1();
-    delay(1000);
+    level2();
+  
 
     //Turbidity
     read_turbidity();
     
-    level2();
-    delay(1000);
+    level1();
+
     // update timer
     lastUpdate = millis();
   }
@@ -169,10 +169,7 @@ void level1()
   // Calculating the distance
   int distance = (25-(duration*0.034/2))/25*100;
   Serial.println(distance);
-  // return if the value hasn't changed
-  if (distance == last1)
-    return;
-
+ 
   // save the current state to the analog feed
   tank_1->save(distance);
 
@@ -202,9 +199,6 @@ void level2()
   // Calculating the distance
   int distance = (25-(duration*0.034/2))/25*100;
   Serial.println(distance);
-  // return if the value hasn't changed
-  if (distance == last2)
-    return;
 
   // save the current state to the analog feed
   tank_2->save(distance);
@@ -250,7 +244,7 @@ void read_turbidity() {
   double avg_ntu = 0 , ntu;
   int sensorValue = analogRead(A0);
   float voltage = sensorValue * (5.0 / 1024.0);
-  ntu = ((-1120.4) * voltage * voltage) + (5742.3 * voltage) - 4352.9;
+  ntu = (((-1120.4) * voltage * voltage) + (5742.3 * voltage) - 4352.9)/1000;
   avg_ntu += (ntu);
   turbidity->save(avg_ntu);
   Serial.println(avg_ntu);
