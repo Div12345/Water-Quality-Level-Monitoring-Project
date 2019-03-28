@@ -21,9 +21,11 @@
 const int p1 = 5; //D1
 const int p2 = 4; //D2
 const int p3 = 0; //D3
+int a,b,c;
 int over = 0;
+int t1=0,t2=0,t3=0;
 // this int will hold the current count for our sketch
-int count = 0,lowlimit=10,highlimit=40;
+int count = 0,lowlimit=40,highlimit=50;
 
 // Track time of last published messages and limit feed->save events to once
 // every IO_LOOP_DELAY milliseconds.
@@ -35,7 +37,7 @@ int count = 0,lowlimit=10,highlimit=40;
 // Instead, we can use the millis() function to get the current time in
 // milliseconds and avoid publishing until IO_LOOP_DELAY milliseconds have
 // passed.
-#define IO_LOOP_DELAY 5000
+#define IO_LOOP_DELAY 10000
 unsigned long lastUpdate = 0;
 
 // set up the 'counter' feed
@@ -48,11 +50,13 @@ AdafruitIO_Feed *tank_3 = io.feed("tank-3");
 AdafruitIO_Feed *master = io.feed("override");
 
 void setup() {
-
+  Serial.begin(9600);
   digitalWrite(p1,OUTPUT);
   digitalWrite(p2,OUTPUT);
   digitalWrite(p3,OUTPUT);
-  
+  digitalWrite(p1,LOW);
+  digitalWrite(p2,LOW);
+  digitalWrite(p3,LOW);
   // connect to io.adafruit.com
   io.connect();
 
@@ -91,71 +95,91 @@ void loop() {
   // function. it keeps the client connected to
   // io.adafruit.com, and processes any incoming data.
   io.run();
-
-/*  if (millis() > (lastUpdate + IO_LOOP_DELAY)) {
-    // after publishing, store the current time
-    lastUpdate = millis();
+//1
+Serial.println("Running");
+  if((over/100)==1)
+  {digitalWrite(p1,LOW);
+  pump_1->save(false);
+  a=0;
   }
-*/
+  else
+  {
+  Serial.println(t1);
+   
+  if((t1<=lowlimit)&&(a==0))
+  { digitalWrite(p1,HIGH);
+  a=1;
+  pump_1->save(true);
+  }
+ 
+  if((t1>=highlimit)&&(a==1))
+  { digitalWrite(p1,LOW);
+  a=0;
+  pump_1->save(false);
+  }
+ 
+}
+
+//2
+if(((over/10)%10)==1)
+  {digitalWrite(p2,LOW);
+  pump_2->save(false);
+  b=0;
+  }
+  else
+  {
+  Serial.println(t2);
+  
+  if((t2<=lowlimit)&&(b==0))
+  { digitalWrite(p2,HIGH);
+  b=1;
+  pump_2->save(true);
+  }
+  
+  if((t2>=highlimit)&&(b==1))
+  { digitalWrite(p2,LOW);
+  b=0;
+  pump_2->save(false);
+  }
+  
+}
+
+//3
+if((over%10)==1)
+  {digitalWrite(p1,LOW);
+  pump_1->save(false);
+  c=0;
+  }
+  else
+  {
+  Serial.println(t3);
+  
+  if((t3<=lowlimit)&&(c==0))
+  { digitalWrite(p3,HIGH);
+  c=1;
+  pump_3->save(true);
+  }
+  
+  if((t3>=highlimit)&&(c==1))
+  { digitalWrite(p3,LOW);
+  c=0;
+  pump_3->save(false);
+  }
+ 
+}
 }
 
 // this function is called whenever a 'counter' message
 // is received from Adafruit IO. it was attached to
 // the counter feed in the setup() function above.
 void handlet1(AdafruitIO_Data *data) {
-  if((over/100)==1)
-  {digitalWrite(p1,LOW);
-  pump_1->save(false);
+  t1=data->toInt();
   }
-  else
-  {int t1=data->toInt();
-  
-  if((t1<=lowlimit)&&(digitalRead(p1)==0))
-  { digitalWrite(p1,HIGH);
-  pump_1->save(true);
-  }
-  
-  if((t1>=highlimit)&&(digitalRead(p1)==1))
-  { digitalWrite(p1,LOW);
-  pump_1->save(false);
-  }
-}}
 void handlet2(AdafruitIO_Data *data) {
-  if(((over/10)%10)==1)
-  {digitalWrite(p2,LOW);
-  pump_2->save(false);
+  t2=data->toInt();
   }
-  else
-  {int t2=data->toInt();
-  
-  if((t2<=lowlimit)&&(digitalRead(p2)==0))
-  { digitalWrite(p2,HIGH);
-  pump_2->save(true);
-  }
-  
-  if((t2>=highlimit)&&(digitalRead(p2)==1))
-  { digitalWrite(p2,LOW);
-  pump_2->save(false);
-  }
-
-}}
 void handlet3(AdafruitIO_Data *data) {
-  if((over%10)==1)
-  {digitalWrite(p1,LOW);
-  pump_1->save(false);
+  t3=data->toInt();
   }
-  else
-  {int t3=data->toInt();
-  
-  if((t3<=lowlimit)&&(digitalRead(p3)==0))
-  { digitalWrite(p3,HIGH);
-  pump_3->save(true);
-  }
-  
-  if((t3>=highlimit)&&(digitalRead(p3)==1))
-  { digitalWrite(p3,LOW);
-  pump_3->save(false);
-  }
-}}
 void handleover(AdafruitIO_Data *data)
-{ over = data->toInt();}
+{ over=data->toInt();}
